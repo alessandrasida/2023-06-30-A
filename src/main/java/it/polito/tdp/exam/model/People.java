@@ -2,7 +2,7 @@ package it.polito.tdp.exam.model;
 
 import java.time.LocalDate;
 
-public class People {
+public class People implements Comparable<People>{
 
     private String playerID;
     private String birthCountry;
@@ -183,6 +183,12 @@ public class People {
 	@Override
 	public String toString() {
 		return nameFirst + " " + nameLast;
+	}
+
+	@Override
+	public int compareTo(People o) {
+		// TODO Auto-generated method stub
+		return (this.nameLast+this.nameFirst).compareTo(o.nameLast+o.nameFirst);
 	}
     
     
