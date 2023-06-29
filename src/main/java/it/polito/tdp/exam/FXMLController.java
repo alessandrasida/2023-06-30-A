@@ -85,7 +85,7 @@ public class FXMLController {
     	List<Dettaglio> dettagli = this.model.getDettagli(anno);
     	this.txtResult.appendText("\nDettagli per l'anno scelto:\n");
     	for(Dettaglio d : dettagli) {
-    		this.txtResult.appendText(d + "\n");
+    		this.txtResult.appendText(anno+"<->"+d + "\n");
     	}
     }
 

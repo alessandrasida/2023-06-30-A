@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -49,19 +50,14 @@ public class Model {
 			this.annoToPlayers.put(anno, this.dao.getPlayersTeamYear(name, anno) );
 		}
 		
+		
 		//verificare ogni coppia di anni, e creare un arco con il peso corrispondente
 		for (int i = 0; i <vertici.size(); i++) {
 			for (int j = i+1; j < vertici.size(); j++) {
 				List<People> giocatori1 = new ArrayList<People>(this.annoToPlayers.get(vertici.get(i)));
 				List<People> giocatori2 = this.annoToPlayers.get(vertici.get(j));
-				Collections.sort(giocatori1);
-				Collections.sort(giocatori2);
-				System.out.println(giocatori1);
-				System.out.println(giocatori2);
 				giocatori1.retainAll(giocatori2);
 				int peso = giocatori1.size();
-				System.out.println(peso + "\n");
-				
 				Graphs.addEdgeWithVertices(this.grafo, vertici.get(i), vertici.get(j), peso);
 			}
 		}
@@ -78,12 +74,15 @@ public class Model {
 	}
 	
 	
+	
 	public List<Dettaglio> getDettagli(int anno) {
 		List<Dettaglio> result = new ArrayList<Dettaglio>();
-		Set<DefaultWeightedEdge> archiUscenti = this.grafo.outgoingEdgesOf(anno);
+		List<Integer> adiacenti = Graphs.neighborListOf(this.grafo, anno);
 		
-		for(DefaultWeightedEdge arco : archiUscenti) {
-			result.add(new Dettaglio(this.grafo.getEdgeTarget(arco), (int)this.grafo.getEdgeWeight(arco)) );
+		
+		for(Integer nodo : adiacenti) {
+			DefaultWeightedEdge arco = this.grafo.getEdge(anno, nodo);
+			result.add(new Dettaglio(nodo, (int)this.grafo.getEdgeWeight(arco)) );
 		}
 		Collections.sort(result);
 		return result;
