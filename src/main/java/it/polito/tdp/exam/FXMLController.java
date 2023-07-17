@@ -5,8 +5,11 @@
 package it.polito.tdp.exam;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.exam.model.Adiacenti;
 import it.polito.tdp.exam.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,10 +38,10 @@ public class FXMLController {
     private Button btnSimula; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbAnno"
-    private ComboBox<?> cmbAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> cmbAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbSquadra"
-    private ComboBox<?> cmbSquadra; // Value injected by FXMLLoader
+    private ComboBox<String> cmbSquadra; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
@@ -48,12 +51,46 @@ public class FXMLController {
 
     @FXML
     void handleCreaGrafo(ActionEvent event) {
-
+    	this.txtResult.clear();
+    	if( this.cmbSquadra.getValue() == null ) {
+    		this.txtResult.setText("Selezionare una squadra.");
+    		return;
+    	}
+    	
+    	this.model.ClearGrafo();
+    	
+    	String squadra = this.cmbSquadra.getValue();
+    	this.model.creaGrafo(squadra);
+    	
+    	this.txtResult.appendText("Grafo creato. \n");
+    	this.txtResult.appendText("#Vertici: " + this.model.getnVertici() + "\n");
+    	this.txtResult.appendText("Ci sono " + this.model.getnARchi() + " archi. \n");
+    	
+    	List<Integer> anni = this.model.getAnni();
+    	for( Integer i : anni) {
+    		this.cmbAnno.getItems().add(i);
+    	}
+    	
     }
 
     @FXML
     void handleDettagli(ActionEvent event) {
-
+    	this.txtResult.clear();
+    	if( this.cmbAnno.getValue() == null ) {
+    		this.txtResult.setText("Selezionare un anno.");
+    		return;
+    	}
+    	
+    	this.txtResult.appendText("Grafo creato. \n");
+    	this.txtResult.appendText("#Vertici: " + this.model.getnVertici() + "\n");
+    	this.txtResult.appendText("Ci sono " + this.model.getnARchi() + " archi. \n");
+    	
+    	this.txtResult.appendText("\nDettagli per l'anno scelto:\n");
+    	List<Adiacenti> result = this.model.getAdiacenti(this.cmbAnno.getValue());
+    	for( Adiacenti a : result) {
+    		this.txtResult.appendText(a + "\n");
+    	}
+    	
     }
 
     @FXML
@@ -75,6 +112,12 @@ public class FXMLController {
 
     public void setModel(Model model) {
         this.model = model;
+        
+        List<String> squadre = this.model.getNomiSquadre();
+        Collections.sort(squadre);
+        for( String s : squadre) {
+        	this.cmbSquadra.getItems().add(s);
+        }
     }
 
 }
